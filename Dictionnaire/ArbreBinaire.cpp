@@ -73,8 +73,10 @@ void ArbreBinaire::ajouterMot(string s)
 
 void ArbreBinaire::enleverMot(string s)
 {
+	/*Noeud* precedent = racine;
 	Noeud* temp = racine->prochaine;
-	Noeud* dernierAvecAlternative = NULL;
+	Noeud* dernierParentAvecAlternative = NULL;
+	Noeud* dernierFrereAvantAlternative = NULL;
 
 	size_t i = 0;
 
@@ -82,14 +84,16 @@ void ArbreBinaire::enleverMot(string s)
 		if (temp->lettre == toupper(s[i])) {
 			i++;
 			if (temp->alternative)
-				dernierAvecAlternative = temp;
+				dernierFrereAvantAlternative = temp;
 			// Si on arrive à la fin du mot demandé
 			if (i == s.size()) {
 				break;
 			}
+			precedent = temp;
 			temp = temp->prochaine;
 		}
 		else if (temp->alternative) {
+			dernierFrereAvantAlternative = temp;
 			temp = temp->alternative;
 		}
 	}
@@ -100,14 +104,18 @@ void ArbreBinaire::enleverMot(string s)
 		if (temp->prochaine) {
 			temp->finMot = false;
 		}
-		else if(dernierAvecAlternative){
-			dernierAvecAlternative = dernierAvecAlternative->alternative;
+		else if(temp->alternative){
+			precedent->prochaine = temp->alternative;
+			//delete reste
+		}
+		else if (precedent->prochaine == dernierFrereAvantAlternative) {
+			precedent->
 		}
 		//TODO delete noeuds
 	}
 	else {
 		cout << "Le mot " << s << " n'appartenait pas au dictionnaire." << endl;
-	}
+	}*/
 	
 }
 
@@ -125,10 +133,10 @@ void ArbreBinaire::afficherDict()
 
 void ArbreBinaire::afficherDict(string prefixe, Noeud* courrant)
 {
-	cout << prefixe << endl;
+	//cout << prefixe << endl;
 
 	if (courrant->finMot)
-		cout << "===> " << prefixe + courrant->lettre << endl;
+		cout << "=> " << prefixe + courrant->lettre << endl;
 
 	if(courrant->prochaine)
 		afficherDict(prefixe + courrant->lettre, courrant->prochaine);
