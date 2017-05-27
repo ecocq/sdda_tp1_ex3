@@ -28,9 +28,10 @@ private:
 		Noeud* alternative;
 		bool finMot;
 
-		Noeud(const char &l, bool _finMot = false, Noeud* _prochaine = 0, Noeud* _alternative = 0) : 
+		Noeud(const char &l, bool _finMot = false, Noeud* _prochaine = NULL, Noeud* _alternative = NULL) : 
 			prochaine(_prochaine), lettre(l), alternative(_alternative), finMot(_finMot) {}
 		~Noeud() {
+			cout << "Delete " << lettre << endl;
 			delete(alternative);
 			delete(prochaine);
 		}
@@ -39,8 +40,7 @@ private:
 	// Les membres données
 	Noeud* racine; //racine de l'arbre
 	void afficherDict(string prefixe, Noeud* courrant);
-	bool enleverLettre(Noeud* origine);
-
+	int enleverSuffixe(Noeud* courrant);
 	// TODO rajouter les autres fonctions du cours ??
 
 };

@@ -71,59 +71,117 @@ void ArbreBinaire::ajouterMot(string s)
 	temp->finMot = true;
 }
 
+
 void ArbreBinaire::enleverMot(string s)
 {
-	/*Noeud* precedent = racine;
+	Noeud* parent = racine;
 	Noeud* temp = racine->prochaine;
-	Noeud* dernierParentAvecAlternative = NULL;
-	Noeud* dernierFrereAvantAlternative = NULL;
+	Noeud* dernierParentAlternative = NULL;
+	Noeud* derniereLettreAlternative = NULL;
+	char derniereLettre = racine->lettre;
 
 	size_t i = 0;
 
 	while (temp) {
+		if (dernierParentAlternative != parent && temp->alternative) {
+			dernierParentAlternative = parent;
+			derniereLettre = NULL;
+			derniereLettreAlternative = NULL;
+		}
 		if (temp->lettre == toupper(s[i])) {
 			i++;
-			if (temp->alternative)
-				dernierFrereAvantAlternative = temp;
+			if (temp->alternative) {
+				derniereLettreAlternative = temp;
+				derniereLettre = temp->lettre;
+			}
 			// Si on arrive à la fin du mot demandé
 			if (i == s.size()) {
 				break;
 			}
-			precedent = temp;
+			parent = temp;
 			temp = temp->prochaine;
 		}
-		else if (temp->alternative) {
-			dernierFrereAvantAlternative = temp;
+		else {
 			temp = temp->alternative;
 		}
 	}
 
 	// Si on a trouvé le mot complet
-	if (temp) {
+	if (i == s.size() && temp->finMot) {
 		// S'il y a un autre mot avec la même racine, on ne supprime rien
 		if (temp->prochaine) {
 			temp->finMot = false;
 		}
-		else if(temp->alternative){
-			precedent->prochaine = temp->alternative;
-			//delete reste
+		// S'il y a eu des alternatives, il faut relier correctement
+		else if (derniereLettreAlternative != NULL) {
+			// Premiere lettre à retirer
+			if (dernierParentAlternative->prochaine == derniereLettreAlternative) {
+				int nbFinMots = enleverSuffixe(dernierParentAlternative->prochaine);
+				// Si on n'a pas trouvé d'autres mots alors change les liaisons
+				if (nbFinMots < 2) {
+					temp = dernierParentAlternative->prochaine;
+					dernierParentAlternative->prochaine = derniereLettreAlternative->alternative;
+					cout << "Cas 1" << endl;
+				}
+			}
+			else {
+				temp = dernierParentAlternative->prochaine;
+				// Acces à l'alternative juste avant la bonne lettre
+				while (temp->alternative && temp->alternative != derniereLettreAlternative) {
+					temp = temp->alternative;
+				}
+				if (temp->alternative) {
+					int nbFinMots = enleverSuffixe(temp->alternative);
+					// Si on n'a pas trouvé d'autres mots alors change les liaisons
+					if (nbFinMots < 2) {
+						temp->alternative = temp->alternative->alternative;
+						cout << "Cas 2" << endl;
+					}
+				}
+			}
 		}
-		else if (precedent->prochaine == dernierFrereAvantAlternative) {
-			precedent->
+		else {
+			/* TODO Cas du IF surement a supprimer / inutile !! */
+			if (dernierParentAlternative->prochaine->lettre == derniereLettre) {
+				cout << derniereLettre << endl;
+				temp = dernierParentAlternative->prochaine->alternative;
+				int nbFinMots = enleverSuffixe(dernierParentAlternative->prochaine);
+				// Si on n'a pas trouvé d'autres mots alors change les liaisons
+				if (nbFinMots < 2)
+					dernierParentAlternative->prochaine = temp;
+				cout << "Cas 3" << endl;
+			}
+			else {
+				int nbFinMots = enleverSuffixe(dernierParentAlternative->prochaine->alternative);
+				cout << "Cas 4" << endl;
+			}
 		}
 		//TODO delete noeuds
+
 	}
 	else {
 		cout << "Le mot " << s << " n'appartenait pas au dictionnaire." << endl;
-	}*/
-	
+	}
 }
 
-bool ArbreBinaire::enleverLettre(Noeud* origine)
+int ArbreBinaire::enleverSuffixe(Noeud * courrant)
 {
-	return false;
-}
+	if (!courrant)
+		return 0;
 
+	int cptFinMot = (courrant->finMot) ? 1 : 0;
+	if (courrant->prochaine) {
+		cptFinMot += enleverSuffixe(courrant->prochaine);
+		if (cptFinMot <= 2) {
+			delete(courrant->prochaine);
+			courrant->prochaine = NULL;
+			if(cptFinMot == 2)
+				return 100;
+		}
+	}
+
+	return cptFinMot;
+}
 
 void ArbreBinaire::afficherDict()
 {
@@ -133,7 +191,7 @@ void ArbreBinaire::afficherDict()
 
 void ArbreBinaire::afficherDict(string prefixe, Noeud* courrant)
 {
-	//cout << prefixe << endl;
+	cout << prefixe << endl;
 
 	if (courrant->finMot)
 		cout << "=> " << prefixe + courrant->lettre << endl;
@@ -145,6 +203,8 @@ void ArbreBinaire::afficherDict(string prefixe, Noeud* courrant)
 		afficherDict(prefixe, courrant->alternative);
 	
 }
+
+
 
 
 bool ArbreBinaire::chercherMot(string s)
