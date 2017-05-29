@@ -7,15 +7,33 @@ ArbreBinaire::ArbreBinaire()
 	racine = new Noeud('#');
 }
 
-ArbreBinaire::ArbreBinaire(string filepath)
+ArbreBinaire::ArbreBinaire(string filename, string filepath)
 {
 	// On veut ici prendre un fichier en parametre et créer l'arbre avec la liste de mots contenus
+	racine = new Noeud('#');
+	ajouterMotsDepuisFichier(filename, filepath);
 }
-
 
 ArbreBinaire::~ArbreBinaire()
 {
 	delete(racine);
+}
+
+void ArbreBinaire::ajouterMotsDepuisFichier(string filename, string filepath)
+{
+	ifstream fichier;
+	fichier.open(filepath+filename);
+	string mot;
+	mot.clear();
+	if (!fichier.is_open()) {
+		cout << "Le fichier n'a pas pu etre ouvert. Verifiez son existence et sa disponibilite.\n";
+		return;
+	}
+
+	while (fichier >> mot)
+	{
+		ajouterMot(mot);
+	}
 }
 
 void ArbreBinaire::ajouterMot(string s)
@@ -121,8 +139,10 @@ void ArbreBinaire::enleverMot(string s)
 				if (nbFinMots < 2) {
 					temp = dernierParentAlternative->prochaine;
 					dernierParentAlternative->prochaine = derniereLettreAlternative->alternative;
-					cout << "Cas 1" << endl;
+					temp->alternative = NULL;
+					delete(temp);
 				}
+				cout << "Cas 1" << endl;
 			}
 			else {
 				temp = dernierParentAlternative->prochaine;
@@ -134,14 +154,16 @@ void ArbreBinaire::enleverMot(string s)
 					int nbFinMots = enleverSuffixe(temp->alternative);
 					// Si on n'a pas trouvé d'autres mots alors change les liaisons
 					if (nbFinMots < 2) {
+						Noeud* supp = temp->alternative;
 						temp->alternative = temp->alternative->alternative;
-						cout << "Cas 2" << endl;
+						supp->alternative = NULL;
+						delete(supp);
 					}
+					cout << "Cas 2" << endl;
 				}
 			}
 		}
 		else {
-			/* TODO Cas du IF surement a supprimer / inutile !! */
 			if (dernierParentAlternative->prochaine->lettre == derniereLettre) {
 				cout << derniereLettre << endl;
 				temp = dernierParentAlternative->prochaine->alternative;
@@ -153,11 +175,13 @@ void ArbreBinaire::enleverMot(string s)
 			}
 			else {
 				int nbFinMots = enleverSuffixe(dernierParentAlternative->prochaine->alternative);
+				if (nbFinMots < 2) {
+					delete(dernierParentAlternative->prochaine->alternative);
+					dernierParentAlternative->prochaine->alternative = NULL;
+				}
 				cout << "Cas 4" << endl;
 			}
 		}
-		//TODO delete noeuds
-
 	}
 	else {
 		cout << "Le mot " << s << " n'appartenait pas au dictionnaire." << endl;
@@ -185,16 +209,19 @@ int ArbreBinaire::enleverSuffixe(Noeud * courrant)
 
 void ArbreBinaire::afficherDict()
 {
+	cout << "=== Liste des mots ===" << endl;
 	if(racine->prochaine)
 		afficherDict("", racine->prochaine);
 }
 
+
 void ArbreBinaire::afficherDict(string prefixe, Noeud* courrant)
 {
-	cout << prefixe << endl;
+	// DEBUG: Pour voir le parcours de l'arbre, il est possible de décommenter la ligne
+	//cout << "(" << prefixe << ")" << endl;
 
 	if (courrant->finMot)
-		cout << "=> " << prefixe + courrant->lettre << endl;
+		cout << prefixe + courrant->lettre << endl;
 
 	if(courrant->prochaine)
 		afficherDict(prefixe + courrant->lettre, courrant->prochaine);
@@ -203,8 +230,6 @@ void ArbreBinaire::afficherDict(string prefixe, Noeud* courrant)
 		afficherDict(prefixe, courrant->alternative);
 	
 }
-
-
 
 
 bool ArbreBinaire::chercherMot(string s)
@@ -236,22 +261,11 @@ bool ArbreBinaire::chercherMot(string s)
 	return false;
 }
 
-/*
-Noeud* ArbreBinaire::chercherLettre(char lettre, Noeud* origine) 
+void ArbreBinaire::supprimerTout()
 {
-	Noeud* temp = origine;
-
-	while (temp) {
-		if (temp->lettre == toupper(lettre)) {
-			return temp;
-		}
-		else if (temp->alternative) {
-			temp = temp->alternative;
-		}
-		// S'il n'y a plus d'alternative et qu'on n'a pas trouvé la lettre
-		else {
-			return NULL;
-		}
-	}
-	return NULL;
-}*/
+	// La suppression d'un noeud est récursive sur les deux fils
+	delete(racine->prochaine);
+	racine->prochaine = NULL;
+	delete(racine->alternative);
+	racine->alternative = NULL;
+}
