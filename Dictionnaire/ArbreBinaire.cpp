@@ -249,10 +249,10 @@ bool ArbreBinaire::chercherMot(string s)
 			}
 			temp = temp->prochaine;
 		}
-		else if(temp->alternative){
+		else if(temp->alternative && temp->lettre < toupper(s[i])){
 			temp = temp->alternative;
 		}
-		// S'il n'y a plus d'alternative et qu'on n'a pas trouvé la lettre
+		// S'il n'y a plus d'alternative, ou qu'on a dépasser la lettre sans la trouver
 		else {
 			return false;
 		}

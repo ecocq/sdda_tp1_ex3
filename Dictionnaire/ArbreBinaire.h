@@ -36,7 +36,7 @@ private:
 			prochaine(_prochaine), lettre(l), alternative(_alternative), finMot(_finMot) {}
 		~Noeud() {
 			// DEBUG: Pour vérifier que les suppressions sont bien faites
-			cout << "Delete " << lettre << endl;
+			//cout << "Delete " << lettre << endl;
 			delete(alternative);
 			delete(prochaine);
 		}
