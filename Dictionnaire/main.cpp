@@ -97,7 +97,7 @@ void lancerDemonstration() {
 	system("PAUSE");
 
 	std::cout << "\n--> Etape 4 : lecture des fichiers\n"
-		<< "-> Supprimer tout le dictionnaire'\n";
+		<< "-> Supprimer tout le dictionnaire\n";
 	dicoDemo.supprimerTout();
 	dicoDemo.afficherDict();
 	system("PAUSE");

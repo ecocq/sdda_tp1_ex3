@@ -142,7 +142,6 @@ void ArbreBinaire::enleverMot(string s)
 					temp->alternative = NULL;
 					delete(temp);
 				}
-				cout << "Cas 1" << endl;
 			}
 			else {
 				temp = dernierParentAlternative->prochaine;
@@ -159,7 +158,6 @@ void ArbreBinaire::enleverMot(string s)
 						supp->alternative = NULL;
 						delete(supp);
 					}
-					cout << "Cas 2" << endl;
 				}
 			}
 		}
@@ -171,7 +169,6 @@ void ArbreBinaire::enleverMot(string s)
 				// Si on n'a pas trouvé d'autres mots alors change les liaisons
 				if (nbFinMots < 2)
 					dernierParentAlternative->prochaine = temp;
-				cout << "Cas 3" << endl;
 			}
 			else {
 				int nbFinMots = enleverSuffixe(dernierParentAlternative->prochaine->alternative);
@@ -179,7 +176,6 @@ void ArbreBinaire::enleverMot(string s)
 					delete(dernierParentAlternative->prochaine->alternative);
 					dernierParentAlternative->prochaine->alternative = NULL;
 				}
-				cout << "Cas 4" << endl;
 			}
 		}
 	}
